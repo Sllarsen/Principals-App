@@ -1,13 +1,11 @@
 package com.example.secureapp
 
-import android.content.pm.ApplicationInfo
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,24 +15,24 @@ import androidx.recyclerview.widget.RecyclerView
  */
 class DisplayFragment : Fragment() {
 
-    lateinit var apps: MutableList<ApplicationInfo>
+    lateinit var applist: ArrayList<Appitem>
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-//        apps = arguments.getParcelable<MutableList<ApplicationInfo>>("list")
-        apps = arguments?.get("listofapps") as MutableList<ApplicationInfo> //get the list of applications
+
+        applist = arguments?.getSerializable("listofapps") as ArrayList<Appitem>
         var view: View? = inflater.inflate(R.layout.fragment_display, container, false)
 
-        val totalapps = ArrayList<Appitem>()
-        for ()
-        totalapps.add(Appitem("Hello"))
-        totalapps.add(Appitem("World"))
+
+
+
+        //set up recycler
+
         val recyclerView = view?.findViewById<RecyclerView>(R.id.recyclerView)
-        val adapter = CustomAdapter(totalapps)
+        val adapter = CustomAdapter(applist)
         recyclerView?.adapter = adapter
         recyclerView?.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
 
@@ -46,7 +44,12 @@ class CustomAdapter(val applist: ArrayList<Appitem>) : RecyclerView.Adapter<Cust
 
     override fun onBindViewHolder(holder: CustomAdapter.ViewHolder, position: Int) {
         val application: Appitem = applist[position]
-        holder.title.text = application.name //set the text to the name
+        holder.name.text = application.name //set the text to the name of the app
+        holder.version.text = "Version: " + application.version //set the text to the version
+        holder.icon.setImageDrawable(application.icon) //set it to the drawable
+
+        //note to self,
+        //insert navigation here when onclick :)
 
     }
 
@@ -65,7 +68,11 @@ class CustomAdapter(val applist: ArrayList<Appitem>) : RecyclerView.Adapter<Cust
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-        val title = itemView.findViewById<TextView>(R.id.title) as TextView
+        val name = itemView.findViewById<TextView>(R.id.name) as TextView
+        val version = itemView.findViewById<TextView>(R.id.version) as TextView
+        val icon = itemView.findViewById<ImageView>(R.id.icon) as ImageView
+
+
 
 
     }

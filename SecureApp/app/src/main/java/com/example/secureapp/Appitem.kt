@@ -1,3 +1,5 @@
 package com.example.secureapp
 
-data class Appitem (var name: String)
+import android.graphics.drawable.Drawable
+
+data class Appitem (var name: String, var version: String, var icon: Drawable)

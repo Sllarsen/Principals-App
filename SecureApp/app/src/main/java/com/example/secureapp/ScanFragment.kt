@@ -2,12 +2,14 @@ package com.example.secureapp
 
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
@@ -18,6 +20,7 @@ import androidx.navigation.findNavController
  */
 class ScanFragment : Fragment() {
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -32,33 +35,45 @@ class ScanFragment : Fragment() {
             val manager: PackageManager =
                 activity!!.packageManager; //Package Manager for the activity
             val applist =
-                manager.getInstalledApplications(PackageManager.GET_GIDS)  // Get all applications on the phone installed by the group ids
+                manager.getInstalledPackages(PackageManager.GET_GIDS) //all the installed packages  in the
 
 
-            //Empty list of our apps
-            var listofapps: ArrayList<ApplicationInfo> = ArrayList() //The array of all the apps we want to keep
+            //added
+            val appinstalled = ArrayList<Appitem>()
 
 
-                    for (application in applist) {
-                        if (manager.getLaunchIntentForPackage(application.packageName) != null) { //none null intents so we know they can be launched
-                            if (application.flags and ApplicationInfo.FLAG_UPDATED_SYSTEM_APP != 0 || application.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
-                                //This is a system app or one that has been updated.
-                            } else {
-                                //This is a user installed application
-                                Log.d("TAG", "Installed package :" + application.packageName)
-                                listofapps.add(application) //add user app to our list
+            //Go through each application
+            for (application in applist) {
+                if (manager.getLaunchIntentForPackage(application.packageName) != null) { //none null intents so we know they can be launched
+                    if (application.applicationInfo.flags and ApplicationInfo.FLAG_UPDATED_SYSTEM_APP != 0 || application.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0) {
+                        //These are the applications that the user has not installed but came pre installed or are built in
+                    } else {
+                        //This is a user installed application
+                        var version: String = application.versionName
+                        var appname =
+                            manager.getApplicationLabel(application.applicationInfo).toString()
+                        var icon = manager.getApplicationIcon(application.applicationInfo)
+                        //output for version
+                        Log.d("TAG", "Installed package :$appname")
+                        Log.d("TAG", "Version $version")
 
-                            }
+                        //make a new appitem to display for recycler view
+                        var newAppItem = Appitem(appname, version, icon)
+                        appinstalled.add(newAppItem)
 
-                        }
                     }
+
+                }
+            }
 
 
             //Navigate to the next page
 
             view?.findNavController()
-                ?.navigate(R.id.action_scanFragment_to_displayFragment, bundleOf(
-                    "listofapps" to listofapps)
+                ?.navigate(
+                    R.id.action_scanFragment_to_displayFragment, bundleOf(
+                        "listofapps" to appinstalled
+                    )
                 )
         }
         return view
