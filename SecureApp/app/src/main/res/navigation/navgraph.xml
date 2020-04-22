@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/navgraph"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navgraph"
     app:startDestination="@id/scanFragment">
     <fragment
         android:id="@+id/scanFragment"
@@ -13,5 +15,14 @@
     <fragment
         android:id="@+id/displayFragment"
         android:name="com.example.secureapp.DisplayFragment"
-        android:label="DisplayFragment" />
+        android:label="DisplayFragment" >
+        <action
+            android:id="@+id/action_displayFragment_to_clickableFragment"
+            app:destination="@id/clickableFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/clickableFragment"
+        android:name="com.example.secureapp.ClickableFragment"
+        android:label="fragment_clickable"
+        tools:layout="@layout/fragment_clickable" />
 </navigation>
